@@ -1,16 +1,21 @@
 import avro.schema
 from avro.datafile import DataFileWriter, DataFileReader
 from avro.io import DatumWriter, DatumReader
-
-schema_file = input("Schema file: ")
-schema = avro.schema.parse(open(schema_file, "rb").read())
+import os
 
 big_avro = input("Original avro file: ")
-reader = DataFileReader(open(big_avro, "rb"), DatumReader())
 
-num_rows = input("Number of rows: ")
+reader = DataFileReader(open(big_avro,"rb"), DatumReader())
+schema = reader.meta
+schema = schema['avro.schema'].decode("utf-8")
+schema_file = open("tempschema.avsc", "w")
+n = schema_file.write(schema)
+schema_file.close()
+schema = avro.schema.parse(open("tempschema.avsc", "rb").read())
 
-writer = DataFileWriter(open(big_avro.replace(".avro", "_small.avro"), "wb"), DatumWriter(), schema)
+num_rows = int(input("Number of rows: "))
+
+writer = DataFileWriter(open(big_avro.replace(".avro", "_" + str(num_rows) + ".avro"), "wb"), DatumWriter(), schema)
 
 count=0
 for row in reader:
@@ -21,3 +26,4 @@ for row in reader:
 
 writer.close()
 reader.close()
+os.remove("tempschema.avsc")
