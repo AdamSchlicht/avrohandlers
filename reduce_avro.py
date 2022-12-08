@@ -14,7 +14,7 @@ writer = DataFileWriter(open(big_avro.replace(".avro", "_small.avro"), "wb"), Da
 
 count=0
 for row in reader:
-    if count > num_rows:
+    if count >= num_rows:
         break
     writer.append(row)
     count+=1
