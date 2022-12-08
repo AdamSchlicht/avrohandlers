@@ -21,4 +21,3 @@ for row in reader:
 
 writer.close()
 reader.close()
-print(count)
